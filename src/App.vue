@@ -31,15 +31,6 @@
       <BooksFeed />
     </div>
 
-    <div>
-  <b-btn v-b-modal.modal1>Add New Book</b-btn>
-
-  <!-- Modal Component -->
-  <b-modal id="modal1" title="Book Details">
-    <InputForm />
-  </b-modal>
-</div>
-
   </div>
 </template>
 
@@ -48,10 +39,9 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { store } from './store';
 import Login from './Login';
-import InputForm from './InputForm';
 import BooksFeed from './BooksFeed';
 export default {
-  components: { Login, InputForm, BooksFeed },
+  components: { Login, BooksFeed },
   data() {
     return {
       store

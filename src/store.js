@@ -27,7 +27,7 @@ var config = {
     currentUser: null,
     addBook: (book) => {
       const dt = {
-        bought_on: new Date(),
+        bought_on: book.bought_on,
         user_name: store.currentUser.uid,
         comments: book.comments,
         description: book.description,
@@ -62,7 +62,17 @@ var config = {
       return booksCollection.doc(book.id).delete().catch(e => console.error('error deleting',  e));
     },
     updateBook:(book)=>{
-      return booksCollection.doc(book.id).update({title:book.title}).catch(e => console.error('error deleting',  e));
+      //console.log(book);
+      return booksCollection.doc(book.id).update(
+        {
+          title:book.title,
+          bought_on: book.bought_on,
+          comments: book.comments,
+          description: book.description,
+          language:book.language,
+          status: book.status,
+          author: book.author
+      }).catch(e => console.error('error updatting',  e));
     }
   };
 
