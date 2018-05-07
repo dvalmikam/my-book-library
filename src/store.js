@@ -5,12 +5,12 @@ import 'firebase/firestore';
 // Initialize Firebase, copy this from the cloud console
 
 var config = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: ""
+  apiKey: "AIzaSyB3505k9XIuzkZbZMlrYYOT5hHcxEAePpo",
+  authDomain: "mybooklibrary-27ef8.firebaseapp.com",
+  databaseURL: "https://mybooklibrary-27ef8.firebaseio.com",
+  projectId: "mybooklibrary-27ef8",
+  storageBucket: "mybooklibrary-27ef8.appspot.com",
+  messagingSenderId: "931850129731"
 };
 firebase.initializeApp(config);
 const firestore = firebase.firestore();
