@@ -221,6 +221,7 @@ export default {
         image:''
       };
       this.$refs.modalInfo.hide();
+      store.getBooks();
     },
   }
 }

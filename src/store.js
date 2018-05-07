@@ -26,7 +26,7 @@ export const store = {
   booksInFeed: null,
   currentUser: null,
   addBook: (book) => {
-    console.log(book);
+    //console.log(book);
     const dt = {
       bought_on: book.bought_on == null
         ? ''
@@ -81,14 +81,8 @@ export const store = {
       author: book.author,
       image:book.image
     }).catch(e => console.error('error updatting', e));
-  }
-};
-
-// When a user logs in or out, save that in the store
-firebase.auth().onAuthStateChanged((user) => {
-  //console.log('Logged in as:', user);
-  store.currentUser = user;
-  if (store.currentUser != null) {
+  },
+  getBooks:()=>{
     // onSnapshot is executed every time the data
     // in the underlying firestore collection changes
     // It will get passed an array of references to
@@ -104,6 +98,17 @@ firebase.auth().onAuthStateChanged((user) => {
 
       store.booksInFeed = books;
     });
+  }
+};
+
+
+// When a user logs in or out, save that in the store
+firebase.auth().onAuthStateChanged((user) => {
+  //console.log('Logged in as:', user);
+  store.currentUser = user;
+  if (store.currentUser != null) {
+    store.getBooks();
+
   }
 
 });
