@@ -3,7 +3,6 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 // Initialize Firebase, copy this from the cloud console
-// Or use mine :)
 var config = {
   apiKey: "AIzaSyB3505k9XIuzkZbZMlrYYOT5hHcxEAePpo",
   authDomain: "mybooklibrary-27ef8.firebaseapp.com",
@@ -42,7 +41,8 @@ export const store = {
       language: book.language,
       status: book.status,
       title: book.title,
-      author: book.author
+      author: book.author,
+      image:book.image==null?'':book.image
     };
     return booksCollection.add(dt).catch(e => console.error('error inserting', dt, e));
   },
@@ -78,7 +78,8 @@ export const store = {
       description: book.description,
       language: book.language,
       status: book.status,
-      author: book.author
+      author: book.author,
+      image:book.image
     }).catch(e => console.error('error updatting', e));
   }
 };

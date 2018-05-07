@@ -76,6 +76,12 @@
           </b-form-select>
         </b-col>
       </b-row>
+      <b-row class="my-1">
+        <b-col sm="3"><label>Image :</label></b-col>
+        <b-col sm="9">
+          <b-form-file v-model="modalInfo.content.image"  placeholder="Choose a file..."></b-form-file>
+        </b-col>
+      </b-row>
     </b-container>
     <b-btn class="mt-3" variant="outline-success" block @click="saveModal" :disabled="$v.modalInfo.content.$invalid">Save</b-btn>
   </b-modal>
@@ -109,7 +115,8 @@ export default {
           description: '',
           comments: '',
           status: '',
-          bought_on: ''
+          bought_on: '',
+          image:''
         }],
         newItemFlag: false
       },
@@ -191,7 +198,8 @@ export default {
         description: '',
         comments: '',
         status: '',
-        bought_on: ''
+        bought_on: '',
+        image:''
       };
       this.$refs.modalInfo.hide();
     },
@@ -209,7 +217,8 @@ export default {
         description: '',
         comments: '',
         status: '',
-        bought_on: ''
+        bought_on: '',
+        image:''
       };
       this.$refs.modalInfo.hide();
     },
