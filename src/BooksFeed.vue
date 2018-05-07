@@ -23,67 +23,43 @@
   </b-table>
 
   <b-modal id="modalInfo" ref="modalInfo" @hidden="resetModal" title="Book Details" hide-footer>
-    <b-container fluid>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Title :</label></b-col>
-        <b-col sm="9">
+    <div>
+      <b-form-group horizontal label="Title">
           <b-form-input v-model="modalInfo.content.title" :state="!$v.modalInfo.content.title.$invalid"></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Author :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>
+      <b-form-group horizontal label="Author">
           <b-form-input v-model="modalInfo.content.author" :state="!$v.modalInfo.content.author.$invalid"></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Description :</label></b-col>
-        <b-col sm="9">
-          <b-form-textarea id="textarea1" v-model="modalInfo.content.description" :rows="3" :max-rows="6">
-          </b-form-textarea>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Language :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>  
+      <b-form-group horizontal label="Language">
           <b-form-select v-model="modalInfo.content.language" class="mb-3" size="sm" :state="!$v.modalInfo.content.language.$invalid">
             <option value="Telugu">Telugu</option>
             <option value="English">English</option>
           </b-form-select>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Comments :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>
+      <b-form-group horizontal label="Description">
+          <b-form-textarea id="textarea1" v-model="modalInfo.content.description" :rows="3" :max-rows="6">
+          </b-form-textarea>
+      </b-form-group>
+      <b-form-group horizontal label="Comments">
           <b-form-textarea v-model="modalInfo.content.comments" :rows="3" :max-rows="6">
           </b-form-textarea>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Bought On :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>
+      <b-form-group horizontal label="Bought On">
           <b-form-input v-model="modalInfo.content.bought_on" type="date" :state="!$v.modalInfo.content.bought_on.$invalid"></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Status :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>
+      <b-form-group horizontal label="Status">
           <b-form-select v-model="modalInfo.content.status" class="mb-3" size="sm" :state="!$v.modalInfo.content.status.$invalid">
             <option value="New">New</option>
             <option value="Started">Started</option>
             <option value="Completed">Completed</option>
             <option value="Pending">Pending</option>
           </b-form-select>
-        </b-col>
-      </b-row>
-      <b-row class="my-1">
-        <b-col sm="3"><label>Image :</label></b-col>
-        <b-col sm="9">
+      </b-form-group>
+      <b-form-group horizontal label="Image">
           <b-form-file v-model="modalInfo.content.image"  placeholder="Choose a file..."></b-form-file>
-        </b-col>
-      </b-row>
-    </b-container>
-    <b-btn class="mt-3" variant="outline-success" block @click="saveModal" :disabled="$v.modalInfo.content.$invalid">Save</b-btn>
+      </b-form-group>
+    </div>
+    <b-btn variant="outline-success" block @click="saveModal" :disabled="$v.modalInfo.content.$invalid">Save</b-btn>
   </b-modal>
 
   <button v-on:click="addBook($event.target)">Add New Book</button>
@@ -108,16 +84,16 @@ export default {
       sortDesc: false,
       filter: null,
       modalInfo: {
-        content: [{
+        content: {
           title: '',
           author: '',
-          language: '',
+          language: 'Telugu',
           description: '',
           comments: '',
-          status: '',
+          status: 'New',
           bought_on: '',
           image:''
-        }],
+        },
         newItemFlag: false
       },
       fields: {
@@ -179,6 +155,7 @@ export default {
   methods: {
     deleteBook: function(book) {
       store.deleteBook(book);
+      store.getBooks();
     },
     addBook: function(button) {
       this.modalInfo.newItemFlag = true;
@@ -194,10 +171,10 @@ export default {
       this.modalInfo.content = {
         title: '',
         author: '',
-        language: '',
+        language: 'Telugu',
         description: '',
         comments: '',
-        status: '',
+        status: 'New',
         bought_on: '',
         image:''
       };
@@ -213,12 +190,12 @@ export default {
       this.modalInfo.content = {
         title: '',
         author: '',
-        language: '',
+        language: 'Telugu',
         description: '',
         comments: '',
         status: '',
         bought_on: '',
-        image:''
+        image:'New'
       };
       this.$refs.modalInfo.hide();
       store.getBooks();
