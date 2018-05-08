@@ -19,7 +19,10 @@
     <template slot="delete" slot-scope="data">
         <button v-on:click="updateBook(data.item, data.index, $event.target)">Update</button>
         <button v-on:click="deleteBook(data.item)">Delete</button>
-      </template>
+    </template>
+    <template slot-scope="data" slot="image">
+      <img v-bind:src="data.item.image" />
+    </template>
   </b-table>
 
   <b-modal id="modalInfo" ref="modalInfo" @hidden="resetModal" title="Book Details" hide-footer>
@@ -29,21 +32,14 @@
       </b-form-group>
       <b-form-group horizontal label="Author">
           <b-form-input v-model="modalInfo.content.author" :state="!$v.modalInfo.content.author.$invalid"></b-form-input>
-      </b-form-group>  
+      </b-form-group>
       <b-form-group horizontal label="Language">
           <b-form-select v-model="modalInfo.content.language" class="mb-3" size="sm" :state="!$v.modalInfo.content.language.$invalid">
             <option value="Telugu">Telugu</option>
             <option value="English">English</option>
           </b-form-select>
       </b-form-group>
-      <b-form-group horizontal label="Description">
-          <b-form-textarea id="textarea1" v-model="modalInfo.content.description" :rows="3" :max-rows="6">
-          </b-form-textarea>
-      </b-form-group>
-      <b-form-group horizontal label="Comments">
-          <b-form-textarea v-model="modalInfo.content.comments" :rows="3" :max-rows="6">
-          </b-form-textarea>
-      </b-form-group>
+
       <b-form-group horizontal label="Bought On">
           <b-form-input v-model="modalInfo.content.bought_on" type="date" :state="!$v.modalInfo.content.bought_on.$invalid"></b-form-input>
       </b-form-group>
@@ -56,7 +52,15 @@
           </b-form-select>
       </b-form-group>
       <b-form-group horizontal label="Image">
-          <b-form-file v-model="modalInfo.content.image"  placeholder="Choose a file..."></b-form-file>
+          <b-form-file v-model="modalInfo.content.file"  placeholder="Choose a file..."></b-form-file>
+      </b-form-group>
+      <b-form-group horizontal label="Description">
+          <b-form-textarea id="textarea1" v-model="modalInfo.content.description" :rows="3" :max-rows="6">
+          </b-form-textarea>
+      </b-form-group>
+      <b-form-group horizontal label="Comments">
+          <b-form-textarea v-model="modalInfo.content.comments" :rows="3" :max-rows="6">
+          </b-form-textarea>
       </b-form-group>
     </div>
     <b-btn variant="outline-success" block @click="saveModal" :disabled="$v.modalInfo.content.$invalid">Save</b-btn>
@@ -92,7 +96,8 @@ export default {
           comments: '',
           status: 'New',
           bought_on: '',
-          image:''
+          image:null,
+          file:null
         },
         newItemFlag: false
       },
@@ -123,6 +128,10 @@ export default {
         status: {
           label: 'Status',
           sortable: true
+        },
+        image:{
+          label:'Image',
+          sortable:false
         },
         delete: {
           label: ''
@@ -176,7 +185,8 @@ export default {
         comments: '',
         status: 'New',
         bought_on: '',
-        image:''
+        image:null,
+        file:null
       };
       this.$refs.modalInfo.hide();
     },
@@ -187,17 +197,7 @@ export default {
         store.updateBook(this.modalInfo.content);
       }
       this.modalInfo.newItemFlag = false;
-      this.modalInfo.content = {
-        title: '',
-        author: '',
-        language: 'Telugu',
-        description: '',
-        comments: '',
-        status: '',
-        bought_on: '',
-        image:'New'
-      };
-      this.$refs.modalInfo.hide();
+      this.resetModal();
       store.getBooks();
     },
   }
