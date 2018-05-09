@@ -21,32 +21,28 @@ const settings = {/* your settings... */
 firestore.settings(settings);
 // a reference to the Balls collection
 const booksCollection = firebase.firestore().collection('books');
-
+const storageRef = firebase.storage().ref();
 // the shared state object that any vue component
 // can get access to
 export const store = {
   booksInFeed: null,
   currentUser: null,
   addBook: (book) => {
-    console.log(book);
-    var photo = book.image.file;
-      if (photo) {
-//gs://mybooklibrary-27ef8.appspot.com
-        let storageRef = firebase.storage().ref();//'profiles/avatar/'+Date.now()+'/'+photo.name);
-        //let imageRef = storageRef.child(photo.name);
-        let uploadTask = storageRef.put(photo);
+    var photo = book.file;
+    if (book.file.name != '') {
+      let imageRef = storageRef.child(photo.name);
+      let uploadTask = imageRef.put(photo);
+    }
 
-        // uploadTask.on('state_changed', function(snapshot){
-        //   var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //   console.log('Upload is ' + progress + '% done');
-        //
-        // }, function(error) {
-        // }, function() {
-        //   var downloadURL = uploadTask.snapshot.downloadURL
-        //  firebase.database().ref('/profiles/' + this.$store.getters.profile.id ).update({ avatar: downloadURL })
-        // })
-
-      }
+      // uploadTask.on('state_changed', function(snapshot){
+      //   var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      //   console.log('Upload is ' + progress + '% done');
+      //
+      // }, function(error) {
+      // }, function() {
+      //   var downloadURL = uploadTask.snapshot.downloadURL
+      //  firebase.database().ref('/profiles/' + this.$store.getters.profile.id ).update({ avatar: downloadURL })
+      // })
 
     const dt = {
       bought_on: book.bought_on == null
@@ -63,54 +59,21 @@ export const store = {
       status: book.status,
       title: book.title,
       author: book.author,
-      image:book.image==null?'':book.image.name
+      image: book.image == null
+        ? ''
+        : book.image.name
     };
     return booksCollection.add(dt).catch(e => console.error('error inserting', dt, e));
   },
   deleteBook: (book) => {
-    //console.log(book);
-    // booksCollection//.where("id", "==", book.id)
-    // .get()
-    // .then(querySnapshot => {
-    //   querySnapshot.forEach((doc) => {
-    //     console.log(doc);
-    //     if(doc.id==book.id)
-    //     {
-    //       doc.ref.delete().then(() => {
-    //         console.log("Document successfully deleted!");
-    //       }).catch(function(error) {
-    //         console.error("Error removing document: ", error);
-    //       });
-    //     }
-    //
-    //   });
-    // })
-    // .catch(function(error) {
-    //   console.log("Error getting documents: ", error);
-    // });
     return booksCollection.doc(book.id).delete().catch(e => console.error('error deleting', e));
   },
   updateBook: (book) => {
-
     var photo = book.file;
-      if (book.file.name!='') {
-        console.log(photo);
-//gs://mybooklibrary-27ef8.appspot.com
-        let storageRef = firebase.storage().ref();//'profiles/avatar/'+Date.now()+'/'+photo.name);
-        let imageRef = storageRef.child(photo.name);
-        let uploadTask = imageRef.put(photo);
-
-        // uploadTask.on('state_changed', function(snapshot){
-        //   var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //   console.log('Upload is ' + progress + '% done');
-        //
-        // }, function(error) {
-        // }, function() {
-        //   var downloadURL = uploadTask.snapshot.downloadURL
-        //  firebase.database().ref('/profiles/' + this.$store.getters.profile.id ).update({ avatar: downloadURL })
-        // })
-
-      }
+    if (book.file.name != '') {
+      let imageRef = storageRef.child(photo.name);
+      let uploadTask = imageRef.put(photo);
+    }
     return booksCollection.doc(book.id).update({
       title: book.title,
       bought_on: book.bought_on,
@@ -119,57 +82,42 @@ export const store = {
       language: book.language,
       status: book.status,
       author: book.author,
-      image:book.file.name
+      image: book.file.name
     }).catch(e => console.error('error updatting', e));
   },
-  getBooks:()=>{
+  getBooks: () => {
     // onSnapshot is executed every time the data
     // in the underlying firestore collection changes
     // It will get passed an array of references to
     // the documents that match your query
-    var storageRef = firebase.storage().ref();
-    booksCollection.where('user_name', '==', store.currentUser.uid)
-      .get().then((booksRef) => { //.onSnapshot((booksRef) => {
+    booksCollection.where('user_name', '==', store.currentUser.uid).get().then((booksRef) => { //.onSnapshot((booksRef) => {
       const books = [];
       booksRef.forEach((doc) => {
         const book = doc.data();
         book.id = doc.id;
 
-        var imageURL='';
-        if(book.image !='')
-        {
-          storageRef.child(book.image)
-          .getDownloadURL().then(function(url) {
-           imageURL = url;
-         }).catch(function(error)
-         {
-           console.log(error);
-         });
+        if (book.image != '') {
+          storageRef.child(book.image).getDownloadURL().then(function(url) {
+            book.image1 = url;
+          }).catch(function(error) {
+            console.log(error);
+          });
         }
-        book.image = imageURL;
-        console.log(imageURL);
+        else {
+          //book.image = "assets/logo.png";
+          storageRef.child("logo.png").getDownloadURL().then(function(url) {
+            book.image1 = url;
+          }).catch(function(error) {
+            console.log(error);
+          });
+        }
+        //console.log(book);
         books.push(book);
       });
-
       store.booksInFeed = books;
     });
-  },
-  getImageUrl:(imagename)=>{
-    var imageURL='';
-    if(imagename !=null && imagename !='')
-    {
-      storageRef.child('images/'+imagename)
-      .getDownloadURL().then(function(url) {
-       imageURL = url;
-     }).catch(function(error)
-     {
-       console.log(error);
-     });
-    }
-    return imageURL;
   }
 };
-
 
 // When a user logs in or out, save that in the store
 firebase.auth().onAuthStateChanged((user) => {
@@ -177,7 +125,5 @@ firebase.auth().onAuthStateChanged((user) => {
   store.currentUser = user;
   if (store.currentUser != null) {
     store.getBooks();
-
   }
-
 });

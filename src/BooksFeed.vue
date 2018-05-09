@@ -20,8 +20,8 @@
         <button v-on:click="updateBook(data.item, data.index, $event.target)">Update</button>
         <button v-on:click="deleteBook(data.item)">Delete</button>
     </template>
-    <template slot-scope="data" slot="image">
-      <img v-bind:src="data.item.image" />
+    <template slot-scope="data" slot="image1">
+      <img v-bind:src="data.item.image1" />
     </template>
   </b-table>
 
@@ -129,7 +129,7 @@ export default {
           label: 'Status',
           sortable: true
         },
-        image:{
+        image1:{
           label:'Image',
           sortable:false
         },
@@ -176,7 +176,6 @@ export default {
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     resetModal() {
-      //console.log("test");
       this.modalInfo.content = {
         title: '',
         author: '',
