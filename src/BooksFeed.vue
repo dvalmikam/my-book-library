@@ -20,8 +20,8 @@
         <button v-on:click="updateBook(data.item, data.index, $event.target)">Update</button>
         <button v-on:click="deleteBook(data.item)">Delete</button>
     </template>
-    <template slot-scope="data" slot="image1">
-      <img v-bind:src="data.item.image1" />
+    <template slot-scope="data" slot="imageUrl">
+      <img width="100" height="100" v-bind:src="data.item.imageUrl" />
     </template>
   </b-table>
 
@@ -129,7 +129,7 @@ export default {
           label: 'Status',
           sortable: true
         },
-        image1:{
+        imageUrl:{
           label:'Image',
           sortable:false
         },

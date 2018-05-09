@@ -29,7 +29,7 @@ export const store = {
   currentUser: null,
   addBook: (book) => {
     var photo = book.file;
-    if (book.file.name != '') {
+    if (book.file != null) { //.name != ''
       let imageRef = storageRef.child(photo.name);
       let uploadTask = imageRef.put(photo);
     }
@@ -59,9 +59,10 @@ export const store = {
       status: book.status,
       title: book.title,
       author: book.author,
-      image: book.image == null
+      image: book.file == null
         ? ''
-        : book.image.name
+        : book.file.name,
+      imageUrl: ''
     };
     return booksCollection.add(dt).catch(e => console.error('error inserting', dt, e));
   },
@@ -70,7 +71,7 @@ export const store = {
   },
   updateBook: (book) => {
     var photo = book.file;
-    if (book.file.name != '') {
+    if (book.file != null) {
       let imageRef = storageRef.child(photo.name);
       let uploadTask = imageRef.put(photo);
     }
@@ -82,7 +83,8 @@ export const store = {
       language: book.language,
       status: book.status,
       author: book.author,
-      image: book.file.name
+      image: book.file == null ? '': book.file.name,
+      imageUrl:''
     }).catch(e => console.error('error updatting', e));
   },
   getBooks: () => {
@@ -98,7 +100,7 @@ export const store = {
 
         if (book.image != '') {
           storageRef.child(book.image).getDownloadURL().then(function(url) {
-            book.image1 = url;
+            book.imageUrl = url;
           }).catch(function(error) {
             console.log(error);
           });
@@ -106,7 +108,7 @@ export const store = {
         else {
           //book.image = "assets/logo.png";
           storageRef.child("logo.png").getDownloadURL().then(function(url) {
-            book.image1 = url;
+            book.imageUrl = url;
           }).catch(function(error) {
             console.log(error);
           });
