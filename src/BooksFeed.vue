@@ -1,9 +1,45 @@
 <template>
 <div>
   <div>&nbsp;</div>
+  <b-container class="bv-example-row" fluid>
+      <b-row>
+          <b-col class="col-lg-4">
+            <b-form-group horizontal label="Title" class="mb-0">
+              <b-input-group>
+                <b-form-input v-model="filter" placeholder="Type to Search"/>
+                <b-input-group-append>
+                  <b-btn :disabled="!filter" @click="filter = ''" variant="outline-primary">Clear</b-btn>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col class="col-lg-4">
+            <b-form-group horizontal label="Author" class="mb-0">
+              <b-input-group>
+                <b-form-input v-model="author" placeholder="Type to Search" />
+                <b-input-group-append>
+                  <b-btn :disabled="!author" @click="author = ''" variant="outline-primary">Clear</b-btn>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col class="col-lg-4">
+            <b-form-group horizontal label="Status" class="mb-0">
+                <b-form-select v-model="status" variant="outline-primary">
+                  <option value="">All</option>
+                  <option value="HaveToBuy">HaveToBuy</option>
+                  <option value="New">New</option>
+                  <option value="Started">Started</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
+                </b-form-select>
+            </b-form-group>
+          </b-col>
+      </b-row>
+  </b-container>
   <div class="row">
     <div class="col-lg-4">
-      <b-form-group horizontal label="Title" class="mb-0">
+      <b-form-group horizontal label="Title">
         <b-input-group>
           <b-form-input v-model="filter" placeholder="Type to Search"/>
           <b-input-group-append>
@@ -13,7 +49,7 @@
       </b-form-group>
     </div>
     <div class="col-lg-4">
-      <b-form-group horizontal label="Author" class="mb-0">
+      <b-form-group horizontal label="Author">
         <b-input-group>
           <b-form-input v-model="author" placeholder="Type to Search" />
           <b-input-group-append>
@@ -23,7 +59,7 @@
       </b-form-group>
     </div>
     <div class="col-lg-4">
-      <b-form-group horizontal label="Status" class="mb-0">
+      <b-form-group horizontal label="Status">
           <b-form-select v-model="status" variant="outline-primary">
             <option value="">All</option>
             <option value="HaveToBuy">HaveToBuy</option>
@@ -54,25 +90,15 @@
     </b-row>
 </b-container>
 
-<div class="row">
-  <div class="col-md-8">
-    <b-pagination size="lg" v-on:input="setSliceRange()" :total-rows=sortedList.length v-model="currentPage" :per-page="pageSize">
-    </b-pagination>
-  </div>
-  <div class="col-md-4">
-    <label>Number Of Books: </label>{{sortedList.length}}
-  </div>
-</div>
-
 <b-container class="bv-example-row" fluid>
     <b-row>
-        <b-col v-for="item in sortedList.slice(startIndex, endIndex)">
+        <b-col v-for="item in sortedList.slice(startIndex, endIndex)" class="col-lg-2">
           <b-card :title=item.title
                  :img-src=item.imageUrl
                  img-alt="Image"
                  img-top
                  tag="article"
-                 style="max-width: 20rem;"
+                 style="max-width: 15rem;"
                  class="mb-4"
                  v-on:click="updateBook(item, index, $event.target)">
            <p class="card-text">
@@ -82,22 +108,6 @@
         </b-col>
     </b-row>
 </b-container>
- <div class="row">
-  <div v-for="item in sortedList.slice(startIndex, endIndex)" class="col-lg-3">
-   <b-card :title=item.title
-          :img-src=item.imageUrl
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 15rem;"
-          class="mb-4"
-          v-on:click="updateBook(item, index, $event.target)">
-    <p class="card-text">
-      {{item.author}}
-    </p>
-  </b-card>
-  </div>
- </div>
 
  <b-modal id="modalInfo" ref="modalInfo" @hidden="resetModal" title="Book Details" hide-footer>
     <div>
