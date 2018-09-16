@@ -1,31 +1,105 @@
 <template>
-<div class="table-responsive">
-  <b-row>
-    <b-col md="6" class="my-1">
-      <b-form-group horizontal label="Search" class="mb-0">
+<div>
+  <div>&nbsp;</div>
+  <div class="row">
+    <div class="col-lg-4">
+      <b-form-group horizontal label="Title" class="mb-0">
         <b-input-group>
-          <b-form-input v-model="filter" placeholder="Type to Search" />
+          <b-form-input v-model="filter" placeholder="Type to Search"/>
           <b-input-group-append>
-            <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
+            <b-btn :disabled="!filter" @click="filter = ''" variant="outline-primary">Clear</b-btn>
           </b-input-group-append>
         </b-input-group>
       </b-form-group>
-    </b-col>
-  </b-row>
-  <b-table striped bordered small hover :fields="fields" :items=store.booksInFeed :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="filter">
-    <template slot="index" slot-scope="data">
-        {{data.index + 1}}
-      </template>
-    <template slot="delete" slot-scope="data">
-        <button v-on:click="updateBook(data.item, data.index, $event.target)">Update</button>
-        <button v-on:click="deleteBook(data.item)">Delete</button>
-    </template>
-    <template slot-scope="data" slot="imageUrl">
-      <img width="100" height="100" v-bind:src="data.item.imageUrl" />
-    </template>
-  </b-table>
+    </div>
+    <div class="col-lg-4">
+      <b-form-group horizontal label="Author" class="mb-0">
+        <b-input-group>
+          <b-form-input v-model="author" placeholder="Type to Search" />
+          <b-input-group-append>
+            <b-btn :disabled="!author" @click="author = ''" variant="outline-primary">Clear</b-btn>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form-group>
+    </div>
+    <div class="col-lg-4">
+      <b-form-group horizontal label="Status" class="mb-0">
+          <b-form-select v-model="status" variant="outline-primary">
+            <option value="">All</option>
+            <option value="HaveToBuy">HaveToBuy</option>
+            <option value="New">New</option>
+            <option value="Started">Started</option>
+            <option value="Completed">Completed</option>
+            <option value="Pending">Pending</option>
+          </b-form-select>
+      </b-form-group>
+    </div>
+  </div>
+  <div>&nbsp;</div>
+ <div>
+   <b-button size="lg" variant="outline-primary" v-on:click="addBook($event.target)">
+                Add New Book
+   </b-button>
+</div>
+<div>&nbsp;</div>
+<b-container class="bv-example-row" fluid>
+    <b-row>
+        <b-col>
+          <b-pagination size="lg" v-on:input="setSliceRange()" :total-rows=sortedList.length v-model="currentPage" :per-page="pageSize">
+          </b-pagination>
+        </b-col>
+        <b-col>
+          <label>Number Of Books: </label>{{sortedList.length}}
+        </b-col>
+    </b-row>
+</b-container>
 
-  <b-modal id="modalInfo" ref="modalInfo" @hidden="resetModal" title="Book Details" hide-footer>
+<div class="row">
+  <div class="col-md-8">
+    <b-pagination size="lg" v-on:input="setSliceRange()" :total-rows=sortedList.length v-model="currentPage" :per-page="pageSize">
+    </b-pagination>
+  </div>
+  <div class="col-md-4">
+    <label>Number Of Books: </label>{{sortedList.length}}
+  </div>
+</div>
+
+<b-container class="bv-example-row" fluid>
+    <b-row>
+        <b-col v-for="item in sortedList.slice(startIndex, endIndex)">
+          <b-card :title=item.title
+                 :img-src=item.imageUrl
+                 img-alt="Image"
+                 img-top
+                 tag="article"
+                 style="max-width: 20rem;"
+                 class="mb-4"
+                 v-on:click="updateBook(item, index, $event.target)">
+           <p class="card-text">
+             {{item.author}}
+           </p>
+         </b-card>
+        </b-col>
+    </b-row>
+</b-container>
+ <div class="row">
+  <div v-for="item in sortedList.slice(startIndex, endIndex)" class="col-lg-3">
+   <b-card :title=item.title
+          :img-src=item.imageUrl
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 15rem;"
+          class="mb-4"
+          v-on:click="updateBook(item, index, $event.target)">
+    <p class="card-text">
+      {{item.author}}
+    </p>
+  </b-card>
+  </div>
+ </div>
+
+ <b-modal id="modalInfo" ref="modalInfo" @hidden="resetModal" title="Book Details" hide-footer>
     <div>
       <b-form-group horizontal label="Title">
           <b-form-input v-model="modalInfo.content.title" :state="!$v.modalInfo.content.title.$invalid"></b-form-input>
@@ -45,6 +119,7 @@
       </b-form-group>
       <b-form-group horizontal label="Status">
           <b-form-select v-model="modalInfo.content.status" class="mb-3" size="sm" :state="!$v.modalInfo.content.status.$invalid">
+            <option value="HaveToBuy">HaveToBuy</option>
             <option value="New">New</option>
             <option value="Started">Started</option>
             <option value="Completed">Completed</option>
@@ -65,28 +140,24 @@
     </div>
     <b-btn variant="outline-success" block @click="saveModal" :disabled="$v.modalInfo.content.$invalid">Save</b-btn>
   </b-modal>
-
-  <button v-on:click="addBook($event.target)">Add New Book</button>
-
 </div>
 </template>
 
 <script>
-import {
-  store
-} from './store';
-import {
-  required,
-  minLength,
-  between
-} from 'vuelidate/lib/validators'
+import _ from 'lodash'
+import {store} from './store';
+import {required,minLength,between} from 'vuelidate/lib/validators'
 
 export default {
   data() {
     return {
-      sortBy: 'title',
-      sortDesc: false,
+      currentPage:1,
+      pageSize:24,
+      startIndex: 0,
+      endIndex : 24,
       filter: null,
+      author:null,
+      status:null,
       modalInfo: {
         content: {
           title: '',
@@ -101,69 +172,58 @@ export default {
         },
         newItemFlag: false
       },
-      fields: {
-        index: {
-          label: '#'
-        },
-        title: {
-          label: 'Title',
-          sortable: true
-        },
-        author: {
-          label: 'Author',
-          sortable: true
-        },
-        language: {
-          label: 'Language',
-          sortable: true
-        },
-        'bought_on': {
-          label: 'Bought On',
-          sortable: true
-        },
-        comments: {
-          label: 'Comments',
-          sortable: false
-        },
-        status: {
-          label: 'Status',
-          sortable: true
-        },
-        imageUrl:{
-          label:'Image',
-          sortable:false
-        },
-        delete: {
-          label: ''
-        }
-      },
       store
     };
   },
   validations: {
     modalInfo: {
       content: {
-        title: {
-          required
-        },
-        author: {
-          required
-        },
-        language: {
-          required
-        },
-        status: {
-          required
-        },
-        bought_on: {
-          required
-        }
+        title: {required},
+        author: {required},
+        language: {required},
+        status: {required},
+        bought_on: {required}
       }
     }
   },
+  computed:{
+    sortedList:function()
+    {
+      //let filteredList = _.filter(store.booksInFeed, b=>b.title.indexOf(this.filter) != -1);
+      let filteredList =  store.booksInFeed;
+      if(this.filter !=null)
+      {
+        filteredList =  filteredList.filter(item => {
+           return item.title.toLowerCase().indexOf(this.filter) > -1
+        });
+      }
+      if(this.author !=null)
+      {
+        filteredList =  filteredList.filter(item => {
+           return item.author.toLowerCase().indexOf(this.author) > -1
+        });
+      }
+      if(this.status !=null && this.status!="")
+      {
+        filteredList =  filteredList.filter(item => {
+           return item.status ==this.status//.toLowerCase().indexOf(this.status) > -1
+        });
+      }
+      //console.log(filteredList);
+      return _.orderBy(filteredList, 'title');//return _.orderBy(store.booksInFeed,'title');
+    }
+  },
   methods: {
+    setSliceRange:function(){
+      //console.log(this.currentPage);
+      this.startIndex = ((this.currentPage - 1) * this.pageSize);
+      //console.log(this.startIndex);
+      this.endIndex  =(this.startIndex) + this.pageSize;
+    },
+
     deleteBook: function(book) {
       store.deleteBook(book);
+      //this.resetModal();
       store.getBooks();
     },
     addBook: function(button) {

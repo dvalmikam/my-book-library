@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "deploy": "npm run build && mkdir dist/dist && mv dist/*.* dist/dist/ && cp index.html dist/ && firebase deploy",
-    "start":"node server.js"
+    "deploy": "npm run build  && mv dist/*.* dist/dist/ && cp index.html dist/ && firebase deploy",
+    "start": "node server.js"
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.9",
     "express": "^4.16.3",
     "firebase": "^4.13.1",
+    "lodash": "^4.17.10",
     "server-static": "^2.0.5",
     "vue": "^2.5.11",
     "vue-router": "^3.0.1",

@@ -48,6 +48,7 @@
         <b-col sm="3"><label>Status :</label></b-col>
         <b-col sm="9">
           <b-form-select v-model="book.status" class="mb-3" size="sm">
+           <option value="HaveToBuy">HaveToBuy</option>
            <option value="New">New</option>
            <option value="Started">Started</option>
            <option value="Completed">Completed</option>
