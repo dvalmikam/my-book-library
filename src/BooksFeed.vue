@@ -2,75 +2,42 @@
 <div>
   <div>&nbsp;</div>
   <b-container class="bv-example-row" fluid>
-      <b-row>
-          <b-col class="col-lg-4">
-            <b-form-group horizontal label="Title" class="mb-0">
-              <b-input-group>
-                <b-form-input v-model="filter" placeholder="Type to Search"/>
-                <b-input-group-append>
-                  <b-btn :disabled="!filter" @click="filter = ''" variant="outline-primary">Clear</b-btn>
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-          <b-col class="col-lg-4">
-            <b-form-group horizontal label="Author" class="mb-0">
-              <b-input-group>
-                <b-form-input v-model="author" placeholder="Type to Search" />
-                <b-input-group-append>
-                  <b-btn :disabled="!author" @click="author = ''" variant="outline-primary">Clear</b-btn>
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-          <b-col class="col-lg-4">
-            <b-form-group horizontal label="Status" class="mb-0">
-                <b-form-select v-model="status" variant="outline-primary">
-                  <option value="">All</option>
-                  <option value="HaveToBuy">HaveToBuy</option>
-                  <option value="New">New</option>
-                  <option value="Started">Started</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Pending">Pending</option>
-                </b-form-select>
-            </b-form-group>
-          </b-col>
-      </b-row>
+    <div class="row">
+      <div class="col-lg-4">
+        <b-form-group horizontal label="Title">
+          <b-input-group>
+            <b-form-input v-model="filter"  placeholder="Type to Search"/>
+            <b-input-group-append>
+              <b-btn :disabled="!filter" @click="filter = ''" variant="outline-primary">Clear</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </div>
+      <div class="col-lg-4">
+        <b-form-group horizontal label="Author">
+          <b-input-group>
+            <b-form-input v-model="author" placeholder="Type to Search" />
+            <b-input-group-append>
+              <b-btn :disabled="!author" @click="author = ''" variant="outline-primary">Clear</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </div>
+      <div class="col-lg-4">
+        <b-form-group horizontal label="Status">
+            <b-form-select v-model="status" variant="outline-primary">
+              <option value="">All</option>
+              <option value="HaveToBuy">Have To Buy</option>
+              <option value="New">New</option>
+              <option value="Started">Started</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+            </b-form-select>
+        </b-form-group>
+      </div>
+    </div>
   </b-container>
-  <div class="row">
-    <div class="col-lg-4">
-      <b-form-group horizontal label="Title">
-        <b-input-group>
-          <b-form-input v-model="filter" placeholder="Type to Search"/>
-          <b-input-group-append>
-            <b-btn :disabled="!filter" @click="filter = ''" variant="outline-primary">Clear</b-btn>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form-group>
-    </div>
-    <div class="col-lg-4">
-      <b-form-group horizontal label="Author">
-        <b-input-group>
-          <b-form-input v-model="author" placeholder="Type to Search" />
-          <b-input-group-append>
-            <b-btn :disabled="!author" @click="author = ''" variant="outline-primary">Clear</b-btn>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form-group>
-    </div>
-    <div class="col-lg-4">
-      <b-form-group horizontal label="Status">
-          <b-form-select v-model="status" variant="outline-primary">
-            <option value="">All</option>
-            <option value="HaveToBuy">HaveToBuy</option>
-            <option value="New">New</option>
-            <option value="Started">Started</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-          </b-form-select>
-      </b-form-group>
-    </div>
-  </div>
+
   <div>&nbsp;</div>
  <div>
    <b-button size="lg" variant="outline-primary" v-on:click="addBook($event.target)">
@@ -92,7 +59,7 @@
 
 <b-container class="bv-example-row" fluid>
     <b-row>
-        <b-col v-for="item in sortedList.slice(startIndex, endIndex)" class="col-lg-2">
+        <b-col v-for="item in sortedList.slice(startIndex, endIndex)" class="col-lg-2" :key ="item.title">
           <b-card :title=item.title
                  :img-src=item.imageUrl
                  img-alt="Image"
@@ -100,7 +67,7 @@
                  tag="article"
                  style="max-width: 15rem;"
                  class="mb-4"
-                 v-on:click="updateBook(item, index, $event.target)">
+                 v-on:click="updateBook(item, $event.target)">
            <p class="card-text">
              {{item.author}}
            </p>
@@ -129,7 +96,7 @@
       </b-form-group>
       <b-form-group horizontal label="Status">
           <b-form-select v-model="modalInfo.content.status" class="mb-3" size="sm" :state="!$v.modalInfo.content.status.$invalid">
-            <option value="HaveToBuy">HaveToBuy</option>
+            <option value="HaveToBuy">Have To Buy</option>
             <option value="New">New</option>
             <option value="Started">Started</option>
             <option value="Completed">Completed</option>
@@ -199,24 +166,32 @@ export default {
   computed:{
     sortedList:function()
     {
+      var self= this;
       //let filteredList = _.filter(store.booksInFeed, b=>b.title.indexOf(this.filter) != -1);
       let filteredList =  store.booksInFeed;
-      if(this.filter !=null)
+      if(self.filter !=null)
       {
+        // for(var item in store.booksInFeed)
+        // {
+        //   if(item.title.startsWith(this.filter))
+        //     filteredList.push(item);
+        // }
         filteredList =  filteredList.filter(item => {
-           return item.title.toLowerCase().indexOf(this.filter) > -1
+           return item.title.toLowerCase().indexOf(self.filter.toLowerCase()) != -1;
+           //.startsWith(this.filter) == true;//.indexOf(this.filter) > -1
         });
       }
-      if(this.author !=null)
+      if(self.author !=null)
       {
         filteredList =  filteredList.filter(item => {
-           return item.author.toLowerCase().indexOf(this.author) > -1
+           return item.author.toLowerCase().startsWith(self.author.toLowerCase()) == true;
+           //.indexOf(this.author) > -1
         });
       }
-      if(this.status !=null && this.status!="")
+      if(self.status !=null && self.status!="")
       {
         filteredList =  filteredList.filter(item => {
-           return item.status ==this.status//.toLowerCase().indexOf(this.status) > -1
+           return item.status ==self.status;//.toLowerCase().indexOf(this.status) > -1
         });
       }
       //console.log(filteredList);
@@ -238,9 +213,10 @@ export default {
     },
     addBook: function(button) {
       this.modalInfo.newItemFlag = true;
-      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+      //this.$root.$emit('bv::show::modal', 'modalInfo', button)
+      this.$refs.modalInfo.show();
     },
-    updateBook(item, index, button) {
+    updateBook(item, button) {
       this.modalInfo.newItemFlag = false;
       this.modalInfo.content = item;
       this.$root.$emit('bv::show::modal', 'modalInfo', button)

@@ -45,23 +45,15 @@ export const store = {
       // })
 
     const dt = {
-      bought_on: book.bought_on == null
-        ? ''
-        : book.bought_on,
+      bought_on: book.bought_on == null ? '' : book.bought_on,
       user_name: store.currentUser.uid,
-      comments: book.comments == null
-        ? ''
-        : book.comments,
-      description: book.description == null
-        ? ''
-        : book.description,
+      comments: book.comments == null ? '': book.comments,
+      description: book.description == null ? '' : book.description,
       language: book.language,
       status: book.status,
       title: book.title,
       author: book.author,
-      image: book.file == null
-        ? ''
-        : book.file.name,
+      image: book.file == null ? '' : book.file.name,
       imageUrl: ''
     };
     return booksCollection.add(dt).catch(e => console.error('error inserting', dt, e));
@@ -74,18 +66,31 @@ export const store = {
     if (book.file != null) {
       let imageRef = storageRef.child(photo.name);
       let uploadTask = imageRef.put(photo);
+
+      return booksCollection.doc(book.id).update({
+        title: book.title,
+        bought_on: book.bought_on,
+        comments: book.comments,
+        description: book.description,
+        language: book.language,
+        status: book.status,
+        author: book.author,
+        image:  book.file.name,
+        imageUrl:''
+      }).catch(e => console.error('error updatting', e));
     }
-    return booksCollection.doc(book.id).update({
-      title: book.title,
-      bought_on: book.bought_on,
-      comments: book.comments,
-      description: book.description,
-      language: book.language,
-      status: book.status,
-      author: book.author,
-      image: book.file == null ? '': book.file.name,
-      imageUrl:''
-    }).catch(e => console.error('error updatting', e));
+    else {
+      return booksCollection.doc(book.id).update({
+        title: book.title,
+        bought_on: book.bought_on,
+        comments: book.comments,
+        description: book.description,
+        language: book.language,
+        status: book.status,
+        author: book.author,
+        imageUrl:''
+      }).catch(e => console.error('error updatting', e));
+    }
   },
   getBooks: () => {
     // onSnapshot is executed every time the data

@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-  <b-navbar toggleable="md" type="dark" variant="info">
+  <b-navbar toggleable="md" type="dark" variant="primary">
 
 
     <b-navbar-brand href="#">Books, Books & Books</b-navbar-brand>
@@ -27,7 +27,6 @@
 
 
   <div v-if="store.currentUser">
-
     <BooksFeed />
   </div>
 
