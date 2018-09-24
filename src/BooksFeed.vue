@@ -67,9 +67,18 @@
                  tag="article"
                  style="max-width: 15rem;"
                  class="mb-4"
-                 v-on:click="updateBook(item, $event.target)">
+                 >
+                 <!-- v-on:click="updateBook(item, $event.target)" -->
            <p class="card-text">
-             {{item.author}}
+             {{item.author}}<br/>
+             <b-btn variant="outline-primary" @click="updateBook(item, $event.target)">Edit</b-btn>
+             <form method="get" action="http://www.google.com/search" target="_blank">
+               <div>
+                 <input type="hidden" name="q"  v-model="item.title" />
+                 <b-btn type="submit" variant="outline-primary">Search For Book </b-btn>
+                 <input type="hidden"  name="sitesearch"/>
+               </div>
+             </form>
            </p>
          </b-card>
         </b-col>
